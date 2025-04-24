@@ -1,0 +1,58 @@
+#### general settings
+name: 005_EDSR_Prog_x4_bicSR_test
+suffix: ~
+use_tb_logger: true
+model: EDSR
+distortion: sr
+scale: 4
+#quant: 64
+gpu_ids: [0]
+
+
+datasets:
+  test0:
+    name: Set5
+    mode: GTLQ
+    dataroot_GT: ../datasets/set5_4X/HR_mod32
+    dataroot_LQ: ../datasets/set5_4X/LR_EDSR
+
+#### network structures
+network_G:
+  which_model_G: EDSR
+  n_resblocks: 32
+  n_feats: 256
+  res_scale: 0.1
+  scale: 4
+  rgb_range: 255
+  n_colors: 3
+
+
+
+network_Downsample:
+  which_model_Downsample: downsample
+  scale: 4
+
+
+
+network_Guide:
+  which_model_G: OmniSR
+  upsampling: 4
+  res_num: 5
+  block_num: 1
+  bias: True
+  block_script_name: 'OSA'
+  block_class_name: 'OSA_Block'
+  window_size: 8
+  pe: True
+  ffn_bias: True
+
+
+
+path:
+  strict_load: true
+  load_submodule: ~
+  pretrain_model_G: ../experiments/pretrained_models/edsr/v2_SR.pt
+  pretrain_model_Downsample: ../experiments/pretrained_models/edsr/v2_Downsample.pt
+  pretrain_model_Guide: ../experiments/pretrained_models/omnisr/v2_SR.pt
+
+

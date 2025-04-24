@@ -1,0 +1,56 @@
+#### general settings
+name: 001_test_HCD_IRN_IRN_4X
+suffix: ~
+use_tb_logger: true
+model: IRN
+distortion: sr
+scale: 4
+gpu_ids: [0]
+
+
+
+datasets:
+  test0:
+    name: Set5
+    mode: GTLQ
+    dataroot_GT: ../datasets/set5/HR_mod32
+    dataroot_LQ: ../datasets/set5/LR_mod32/IRN_4X
+
+  test1:
+    name: Set14
+    mode: GTLQ
+    dataroot_GT: ../datasets/set14/HR_mod32
+    dataroot_LQ: ../datasets/set14/LR_mod32/IRN_4X
+
+  test2:
+    name: Urban100
+    mode: GTLQ
+    dataroot_GT: ../datasets/Urban100/HR_mod32
+    dataroot_LQ: ../datasets/Urban100/LR_mod32/IRN_4X
+
+#### network structures
+network_G:
+  which_model_G: IRN
+  subnet_type: DBNet
+  in_nc: 3
+  out_nc: 3
+  block_num: [8, 8]
+  scale: 4
+  init: xavier
+
+
+
+#network_Downsample:
+#  which_model_Downsample: downsample
+#  scale: 4
+
+
+
+path:
+  strict_load: True
+  load_submodule: ~
+  pretrain_model_G: ../experiments/pretrained_models/irn/IRN_x4.pth
+#  pretrain_model_Downsample: ../experiments/pretrained_models/omnisr/v2_Downsample.pt
+
+
+

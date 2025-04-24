@@ -1,0 +1,58 @@
+#### general settings
+name: 001_test_P2P_HCD_EDSR_conv_K32O16_2X
+suffix: ~
+use_tb_logger: true
+model: HCD
+distortion: sr
+scale: 2
+#quant: 64
+gpu_ids: [0]
+
+
+
+datasets:
+  test0:
+    name: Set5
+    mode: GT
+    dataroot_GT: ../datasets/set5/HR_mod32
+
+  test1:
+    name: Set14
+    mode: GT
+    dataroot_GT: ../datasets/set14/HR_mod32
+
+
+  test2:
+    name: Urban100
+    mode: GT
+    dataroot_GT: ../datasets/Urban100/HR_mod32
+
+
+
+network_G:
+  which_model_G: EDSR
+  n_resblocks: 32
+  n_feats: 256
+  res_scale: 0.1
+  scale: 2
+  rgb_range: 255
+  n_colors: 3
+
+
+network_Downsample:
+  which_model_Downsample: Downsample
+  which_method: P2P_Conv
+  kernel_size: 32
+  out_channels: 16
+  scale: 2
+
+
+path:
+  strict_load: true
+  load_submodule: ~
+  pretrain_model_G: ../experiments/pretrained_models/edsr/x2_EDSR_K32O16.pt
+  pretrain_model_Downsample: ../experiments/pretrained_models/edsr/x2_Downsample_K32O16.pt
+
+
+
+
