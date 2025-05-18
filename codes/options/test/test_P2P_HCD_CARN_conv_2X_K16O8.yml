@@ -10,14 +10,14 @@ gpu_ids: [0]
 
 
 datasets:
-  test0:
-    name: Set5
-    mode: GT
-    dataroot_GT: ../datasets/set5/HR_mod32
-#  test1:
-#    name: Set14
+#  test0:
+#    name: Set5
 #    mode: GT
-#    dataroot_GT: ../datasets/set14/HR_mod32
+#    dataroot_GT: ../datasets/set5/HR_mod32
+  test1:
+    name: Set14
+    mode: GT
+    dataroot_GT: ../datasets/set14/HR_mod32
 #  test2:
 #    name: Urban100
 #    mode: GT

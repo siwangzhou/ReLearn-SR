@@ -1,5 +1,5 @@
 #### general settings
-name: 001_test_P2P_HCD_OmniSR_GSM_2X
+name: 001_test_P2P_HCD_EDSR_GSM_2X
 suffix: ~
 use_tb_logger: true
 model: HCD
@@ -15,12 +15,11 @@ datasets:
     mode: GT
     dataroot_GT: ../datasets/set5/HR_mod32
 
-
+#
 #  test1:
 #    name: Set14
 #    mode: GT
 #    dataroot_GT: ../datasets/set14/HR_mod32
-
 
 #  test2:
 #    name: Urban100
@@ -28,18 +27,15 @@ datasets:
 #    dataroot_GT: ../datasets/Urban100/HR_mod32
 
 
+
 #### network structures
 network_G:
-  which_model_G: OmniSR
-  upsampling: 2
-  res_num: 5
-  block_num: 1
-  bias: True
-  block_script_name: 'OSA'
-  block_class_name: 'OSA_Block'
-  window_size: 8
-  pe: True
-  ffn_bias: True
+  which_model_G: EDSR
+  n_resblocks: 32
+  n_feats: 256
+  res_scale: 0.1
+  scale: 2
+  n_colors: 3
 
 
 
@@ -49,11 +45,12 @@ network_Downsample:
   scale: 2
 
 
+
 path:
   strict_load: True
   load_submodule: ~
-  pretrain_model_G: ../experiments/pretrained_models/omnisr_gsm/x2_gsm_OmniSR.pt
-  pretrain_model_Downsample: ../experiments/pretrained_models/omnisr_gsm/x2_gsm_downsample.pt
+  pretrain_model_G: ../experiments/pretrained_models/edsr_gsm/x2_gsm_EDSR.pt
+  pretrain_model_Downsample: ../experiments/pretrained_models/edsr_gsm/x2_gsm_Downsample.pt
 
 
 

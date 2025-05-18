@@ -54,7 +54,7 @@ path:
   strict_load: True
   load_submodule: ~
   pretrain_model_G: ../experiments/pretrained_models/omnisr_conv/x4_OmniSR.pt
-  pretrain_model_Downsample: ../experiments/pretrained_models/omnisr_conv/x4_Downsample.pt
+  pretrain_model_Downsample: ../experiments/pretrained_models/omnisr_conv/x4_conv_Downsample.pt
 
 
 

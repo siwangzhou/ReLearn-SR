@@ -10,40 +10,22 @@ from PIL import Image
 from archs.adaptive_gridsampler.adaptive_gridsampler_cuda import forward, backward
 
 
-# #class P2P_Conv(nn.Module):
-#     def __init__(self, opt):
-#         super(P2P_Conv, self).__init__()
-#         self.opt = opt
-#         scale = opt_get(opt, ['network_Downsample', 'scale'], 4)
-#         if scale == 4:
-#             self.conv1 = nn.Conv2d(in_channels=3, out_channels=8 * 8 * 3, kernel_size=32, stride=32, padding=0)
-#             self.a_size = 8
-#         if scale ==2:
-#             self.conv1 = nn.Conv2d(in_channels=3, out_channels=16 * 16 * 3, kernel_size=32, stride=32, padding=0)
-#             self.a_size = 16
-#         else:
-#             print("Scale Error,Current scale is %d" % scale)
-
-#     def forward(self, x):
-#         x = self.conv1(x)
-#         x = rearrange(x, 'b (c a1 a2) h w -> b c (h a1) (w a2)', a1=self.a_size, a2=self.a_size, c=3)
-
-#         return x
-
 class P2P_Conv(nn.Module):
     def __init__(self, opt):
         super(P2P_Conv, self).__init__()
         self.opt = opt
-        scale = opt_get(opt, ['network_Downsample', 'scale'], 4)
-        kernel_size = opt['network_Downsample']['kernel_size']
-        out_channels = opt['network_Downsample']['out_channels']
-        self.a_size = out_channels
+        scale = opt['network_Downsample']['scale']
 
-
+        if scale ==8:
+            self.conv1 = nn.Conv2d(in_channels=3, out_channels=4 * 4 * 3, kernel_size=32, stride=32, padding=0)
+            self.a_size = 4
         if scale == 4:
             self.conv1 = nn.Conv2d(in_channels=3, out_channels=8 * 8 * 3, kernel_size=32, stride=32, padding=0)
             self.a_size = 8
-        if scale ==2:
+        if scale == 2:
+            kernel_size = opt['network_Downsample']['kernel_size']
+            out_channels = opt['network_Downsample']['out_channels']
+            self.a_size = out_channels
             self.conv1 = nn.Conv2d(in_channels=3, out_channels=out_channels * out_channels * 3, kernel_size=kernel_size, stride=kernel_size, padding=0)
         else:
             print("Scale Error,Current scale is %d" % scale)
@@ -117,10 +99,20 @@ class GSM(nn.Module):
         self.prelu = nn.PReLU()
         self.down_x2_2 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=2, stride=2, padding=0)
         self.conv2 = nn.Conv2d(in_channels=64, out_channels=3, kernel_size=3, stride=1, padding=3 // 2)
-        # )
+
+        if self.scale == 8:
+            self.down_x2_3 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=2, stride=2, padding=0)
+
 
     def forward(self, x):
-        if self.scale == 4:
+        if self.scale == 2:
+            x = self.conv1(x)
+            redual = self.pool2d(x)
+            out = self.down_x2_1(x)
+            x = redual + out
+            x = self.conv2(x)
+
+        elif self.scale == 4:
             x = self.conv1(x)
             redual = self.pool2d(x)
             out = self.down_x2_1(x)
@@ -129,13 +121,22 @@ class GSM(nn.Module):
             out = self.down_x2_2(x)
             x = redual + out
             x = self.conv2(x)
-        elif self.scale == 2:
+
+        elif self.scale == 8:
             x = self.conv1(x)
             redual = self.pool2d(x)
             out = self.down_x2_1(x)
             x = redual + out
+            redual = self.pool2d(x)
+            out = self.down_x2_2(x)
+            x = redual + out
+            redual = self.pool2d(x)
+            out = self.down_x2_3(x)
+            x = redual + out
             x = self.conv2(x)
+
         return x
+
 
 
 class GridSamplerFunction(Function):

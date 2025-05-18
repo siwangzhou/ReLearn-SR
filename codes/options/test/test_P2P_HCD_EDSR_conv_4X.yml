@@ -5,29 +5,28 @@ use_tb_logger: true
 model: HCD
 distortion: sr
 scale: 4
-#quant: 64
 gpu_ids: [0]
 
 
 
 datasets:
-  test0:
-    name: Set5
-    mode: GTLQ
-    dataroot_GT: ../datasets/set5/HR_mod32
-    dataroot_LQ: ../datasets/set5/LR_mod32/EDSR_4X
+#  test0:
+#    name: Set5
+#    mode: GT
+#    dataroot_GT: ../datasets/set5/HR_mod32
+#
+#
+#  test1:
+#    name: Set14
+#    mode: GT
+#    dataroot_GT: ../datasets/set14/HR_mod32
 
-  test1:
-    name: Set14
-    mode: GTLQ
-    dataroot_GT: ../datasets/set14/HR_mod32
-    dataroot_LQ: ../datasets/set14/LR_mod32/EDSR_4X
 
   test2:
     name: Urban100
-    mode: GTLQ
+    mode: GT
     dataroot_GT: ../datasets/Urban100/HR_mod32
-    dataroot_LQ: ../datasets/Urban100/LR_mod32/EDSR_4X
+
 
 
 network_G:
@@ -49,8 +48,8 @@ network_Downsample:
 path:
   strict_load: true
   load_submodule: ~
-  pretrain_model_G: ../experiments/pretrained_models/edsr/x4_EDSR.pt
-  pretrain_model_Downsample: ../experiments/pretrained_models/edsr/x4_Downsample.pt
+  pretrain_model_G: ../experiments/pretrained_models/edsr/x4_conv_EDSR.pt
+  pretrain_model_Downsample: ../experiments/pretrained_models/edsr/x4_conv_Downsample.pt
 
 
 

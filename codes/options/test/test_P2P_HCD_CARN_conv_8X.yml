@@ -1,10 +1,10 @@
 #### general settings
-name: 001_test_P2P_HCD_EDSR_GSM_4X
+name: 001_test_P2P_HCD_CARN_conv_8X
 suffix: ~
 use_tb_logger: true
 model: HCD
 distortion: sr
-scale: 4
+scale: 8
 gpu_ids: [0]
 
 
@@ -29,28 +29,25 @@ datasets:
 
 #### network structures
 network_G:
-  which_model_G: EDSR
-  n_resblocks: 16
-  n_feats: 64
-  res_scale: 1
-  scale: 4
-#  rgb_range: 255
-  n_colors: 3
+  which_model_G: CARN
+  in_nc: 3
+  out_nc: 3
+  scale: 8
 
 
 
 network_Downsample:
   which_model_Downsample: Downsample
-  which_method: GSM
-  scale: 4
+  which_method: P2P_Conv
+  scale: 8
 
 
 
 path:
   strict_load: True
   load_submodule: ~
-  pretrain_model_G: ../experiments/pretrained_models/edsr_gsm/x4_gsm_EDSR.pt
-  pretrain_model_Downsample: ../experiments/pretrained_models/edsr_gsm/x4_gsm_downsample.pt
+  pretrain_model_G: ../experiments/pretrained_models/carn/x8_conv_CARN.pt
+  pretrain_model_Downsample: ../experiments/pretrained_models/carn/x8_conv_downsample.pt
 
 
 

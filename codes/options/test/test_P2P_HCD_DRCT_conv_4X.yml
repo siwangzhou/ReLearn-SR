@@ -10,23 +10,23 @@ gpu_ids: [0]
 
 
 datasets:
-#  test0:
-#    name: Set5
-#    mode: GTLQ
-#    dataroot_GT: ../datasets/set5/HR_mod32
-#    dataroot_LQ: ../datasets/set5/LR_mod32/DRCT_4X
+  test0:
+    name: Set5
+    mode: GT
+    dataroot_GT: ../datasets/set5/HR_mod32
 
-#  test1:
-#    name: Set14
-#    mode: GTLQ
-#    dataroot_GT: ../datasets/set14/HR_mod32
-#    dataroot_LQ: ../datasets/set14/LR_mod32/DRCT_4X
+
+  test1:
+    name: Set14
+    mode: GT
+    dataroot_GT: ../datasets/set14/HR_mod32
+
 
   test2:
     name: Urban100
-    mode: GTLQ
+    mode: GT
     dataroot_GT: ../datasets/Urban100/HR_mod32
-    dataroot_LQ: ../datasets/Urban100/LR_mod32/DRCT_4X
+
 
 
 network_G:

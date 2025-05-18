@@ -53,7 +53,7 @@ network_Downsample:
 path:
   strict_load: True
   load_submodule: ~
-  pretrain_model_G: ../experiments/pretrained_models/omnisr_gsm/x4_EDSR.pt
+  pretrain_model_G: ../experiments/pretrained_models/omnisr_gsm/x4_conv_EDSR.pt
   pretrain_model_Downsample: ../experiments/pretrained_models/omnisr_gsm/x4_gsm_downsample.pt
 
 

@@ -13,7 +13,6 @@ import options.options as option
 import utils.util as util
 from data import create_dataset, create_dataloader
 from models import create_model
-import torchvision.transforms.functional as TF
 import torch.nn.functional as F
 
 # 训练参数配置
@@ -23,8 +22,10 @@ TRAIN_CONFIG = {
     'step_size': 20,
     'gamma': 0.8
 }
-
 loss_fn = lpips.LPIPS(net='alex')
+
+
+opt_yml = 'options/test/test_P2P_HCD_CARN_conv_4X.yml'
 
 def calculate_metrics(y_prime, HR):
     """计算所有评估指标"""
@@ -58,8 +59,6 @@ def calculate_lpips(img1_tensor,img2_tensor):
     lpips_distance = loss_fn(img1_tensor, img2_tensor)
     return lpips_distance.item()
 
-# options
-opt_yml = 'options/test/test_P2P_HCD_OmniSR_GSM_2X.yml'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--opt', type=str, default=opt_yml)
@@ -123,6 +122,7 @@ for test_loader in test_loaders:
         best_sr = None
         first_sr = None
         best_delta = None
+        psnr_max_time = 0  # 新增变量，记录PSNR最佳值时的时间
 
         HR = test_data['GT'].to(device)
 
@@ -176,6 +176,9 @@ for test_loader in test_loaders:
             if update_best_metrics(current_metrics, best_metrics, i):
                 best_sr = y_prime[0].detach().cpu()
                 best_delta = delta
+                # 记录PSNR最佳值时的时间
+                if current_metrics['psnr'] > best_metrics['psnr']['value'] - 1e-4:  # 考虑浮点误差
+                    psnr_max_time = time.time() - start_time
 
             # 更新进度条
             bar.set_postfix_str(
@@ -186,6 +189,8 @@ for test_loader in test_loaders:
 
         finish_time = time.time()
 
+
+        util.save_perturbation(best_delta, os.path.join(output_dir, f'{img_name}_delta_best_view.png'))
         # 将best_delta 进行超分
         best_delta_sr = model.get_upsample(best_delta)
         best_delta = best_delta[0].detach().cpu()
@@ -204,6 +209,7 @@ for test_loader in test_loaders:
         util.save_img(lr_bic_img, os.path.join(output_dir, f'{img_name}_lr_bic.png'))
 
 
+
         # 保存结果
         best_sr_img = util.tensor2img(best_sr)
         first_sr_img = util.tensor2img(first_sr)
@@ -212,7 +218,6 @@ for test_loader in test_loaders:
         best_delta_sr_img = util.tensor2img(best_delta_sr[0].detach().cpu())
         util.save_img(best_sr_img, os.path.join(output_dir, f'{img_name}_best.png'))
         util.save_img(first_sr_img, os.path.join(output_dir, f'{img_name}_first.png'))
-        # util.save_perturbation(delta, os.path.join(output_dir, f'{img_name}_delta.png'))
         util.save_img(best_delta_img, os.path.join(output_dir, f'{img_name}_delta_best.png'))
         util.save_img(best_delta_sr_img, os.path.join(output_dir, f'{img_name}_delta_best_sr.png'))
         util.save_img(first_lr_img, os.path.join(output_dir, f'{img_name}_first_lr.png'))
@@ -235,6 +240,7 @@ for test_loader in test_loaders:
             'LPIPS_Min': f"{best_metrics['lpips']['value']:.4f}",
             'LPIPS_Decrement': f"{(first_metrics['lpips'] - best_metrics['lpips']['value']):.4f}",
             'Peek At': best_metrics['psnr']['iteration'] + 1,
+            'PSNR_Max_Time': f'{psnr_max_time:.2f}s',  # 新增：PSNR最佳值时的时间
             'Used Time': f'{finish_time - start_time:.2f}s'
         }
         results_data.append(result)
@@ -254,6 +260,7 @@ for test_loader in test_loaders:
         logger.info(f"LPIPS: First={first_metrics['lpips']:.4f}, "
                    f"Min={best_metrics['lpips']['value']:.4f}, "
                    f"Decrement={(first_metrics['lpips'] - best_metrics['lpips']['value']):.4f}")
+        logger.info(f"Time: PSNR_Max_Time={psnr_max_time:.2f}s, Total_Time={finish_time - start_time:.2f}s")
 
     # 计算所有平均值
     num_images = len(test_loader)
@@ -276,6 +283,7 @@ for test_loader in test_loaders:
         'LPIPS_Min': f"{metrics_avg['max']['lpips'] / num_images:.5f}",
         'LPIPS_Decrement': f"{-metrics_avg['increment']['lpips'] / num_images:.5f}",
         'Peek At': '',
+        'PSNR_Max_Time': '',  # 新增：PSNR最佳值时的时间
         'Used Time': ''
     }
 

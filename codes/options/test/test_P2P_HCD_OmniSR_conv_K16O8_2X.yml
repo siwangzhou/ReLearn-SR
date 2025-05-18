@@ -1,31 +1,31 @@
 #### general settings
-name: 001_test_P2P_HCD_OmniSR_conv_K32O16_2X
+name: 001_test_P2P_HCD_OmniSR_conv_K16O8_2X
 suffix: ~
 use_tb_logger: true
 model: HCD
 distortion: sr
-scale: 4
+scale: 2
 gpu_ids: [0]
 
 
 
 datasets:
-  test0:
-    name: Set5
-    mode: GTLQ
-    dataroot_GT: ../datasets/set5/HR_mod32
+#  test0:
+#    name: Set5
+#    mode: GT
+#    dataroot_GT: ../datasets/set5/HR_mod32
 
 
   test1:
     name: Set14
-    mode: GTLQ
+    mode: GT
     dataroot_GT: ../datasets/set14/HR_mod32
 
 #
-  test2:
-    name: Urban100
-    mode: GTLQ
-    dataroot_GT: ../datasets/Urban100/HR_mod32
+#  test2:
+#    name: Urban100
+#    mode: GT
+#    dataroot_GT: ../datasets/Urban100/HR_mod32
 
 
 #### network structures
@@ -46,6 +46,8 @@ network_G:
 network_Downsample:
   which_model_Downsample: Downsample
   which_method: P2P_Conv
+  kernel_size: 16
+  out_channels: 8
   scale: 2
 
 
@@ -53,8 +55,8 @@ network_Downsample:
 path:
   strict_load: True
   load_submodule: ~
-  pretrain_model_G: ../experiments/pretrained_models/omnisr_conv/x2_OmniSR.pt
-  pretrain_model_Downsample: ../experiments/pretrained_models/omnisr_conv/x2_Downsample.pt
+  pretrain_model_G: ../experiments/pretrained_models/omnisr_conv/x2_conv_K16O8_OmniSR.pt
+  pretrain_model_Downsample: ../experiments/pretrained_models/omnisr_conv/x2_conv_K16O8_Downsample.pt
 
 
 
