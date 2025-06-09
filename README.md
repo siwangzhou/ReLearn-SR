@@ -1,6 +1,6 @@
 # ReLearn-SR
 
-Run the script 'codes/test_relearn.py' to generate a new optimized LR image.
+Run the script 'codes/test_relearn.py' to generate new, optimized LR images.
 
 ## Usage Instructions
 
